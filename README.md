@@ -1,26 +1,26 @@
-# rcrly
+# lxml
 
 <img src="resources/images/recurly-logo-small.png" />
 
-*An Erlang/LFE Client for the Recurly Billing REST API*
+*An LFE XML-parsing wrapper for erlsom, with utility functions*
+
+Note that for genereating XML in LFE (using S-expressions), we recommend
+[exemplar](https://github.com/lfex/exemplar). The intended use for lxml is
+the *parsing* of XML documents.
 
 ## Table of Contents
 
 * [Introduction](#introduction-)
-  * [About Recurly](#about-recurly-)
-  * [The LFE Client Library](#the-lfe-client-library-)
+  * [About lxml](#about-lxml-)
 * [Installation](#installation-)
 * [Usage](#usage-)
 
 
 ## Introduction [&#x219F;](#table-of-contents)
 
-### About Recurly [&#x219F;](#table-of-contents)
+### About lxml [&#x219F;](#table-of-contents)
 
-From the Recurly [docs site](https://docs.recurly.com/):
-
-<blockquote>Recurly provides a complete recurring billing system designed to remove all the headaches from subscription billing. Whether you’ve integrated with our Hosted Payment Pages, Recurly.js embedded forms, or API, these documents will help manage your day-to-day billing.
-</blockquote>
+TBD
 
 ### The LFE Client Library [&#x219F;](#table-of-contents)
 
@@ -34,14 +34,14 @@ Just add it to your ``rebar.config`` deps:
   {deps, [
     ...
     {rcrly, ".*",
-      {git, "git@github.com:cinova/rcrly.git", "master"}}
+      {git, "git@github.com:oubiwann/lxml.git", "master"}}
       ]}.
 ```
 
 Or, if you use ``lfe.config``:
 
 ```lisp
-#(project (#(deps (#("cinova/rcrly" "master")))))
+#(project (#(deps (#("oubiwann/lxml" "master")))))
 ```
 
 And then do the usual:
@@ -54,4 +54,4 @@ And then do the usual:
 
 ## Usage [&#x219F;](#table-of-contents)
 
-Usage information is provided on the [documentation site](http://cinova.github.io/rcrly/).
+Usage information is provided on the [documentation site](http://oubiwann.github.io/lxml/).
