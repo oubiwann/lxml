@@ -18,13 +18,16 @@ the *parsing* of XML documents.
 
 ## Introduction [&#x219F;](#table-of-contents)
 
-### About lxml [&#x219F;](#table-of-contents)
+lxml, or as it is better known, Professor El Xavier Emile, is a wrapper
+for the Erlang community's [erlsom](https://github.com/willemdj/erlsom)
+library, providing the following additional features:
 
-TBD
+1. Lispy naming conventions via [LFE]() and [kla](), and
+2. Utility functions for easily accessing parsed XML data
+   (e.g., ``map``, ``fold``, ``get-in``, and ``get-linked``).
 
-### The LFE Client Library [&#x219F;](#table-of-contents)
+Both of these are discussed more in the lxml docs (see below for the link).
 
-TBD
 
 ## Installation [&#x219F;](#table-of-contents)
 
@@ -47,7 +50,6 @@ Or, if you use ``lfe.config``:
 And then do the usual:
 
 ```bash
-    $ make get-deps
     $ make compile
 ```
 
