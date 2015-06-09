@@ -1,6 +1,6 @@
 # lxml
 
-<img src="resources/images/recurly-logo-small.png" />
+<img src="resources/images/professor-xavier-emile.png" />
 
 *An LFE XML-parsing wrapper for erlsom, with utility functions*
 
