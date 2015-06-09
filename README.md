@@ -18,9 +18,10 @@ the *parsing* of XML documents.
 
 ## Introduction [&#x219F;](#table-of-contents)
 
-lxml, or as it is better known, Professor El Xavier Emile, is a wrapper
-for the Erlang community's [erlsom](https://github.com/willemdj/erlsom)
-library, providing the following additional features:
+lxml, or as it is better known, Professor El Xavier Emile (A.K.A "El X. Emile"),
+is a wrapper for the Erlang community's
+[erlsom](https://github.com/willemdj/erlsom) library, providing the following
+additional features:
 
 1. Lispy naming conventions via [LFE]() and [kla](), and
 2. Utility functions for easily accessing parsed XML data
