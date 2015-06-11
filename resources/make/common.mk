@@ -10,13 +10,13 @@ SOURCE_DIR = ./src
 OUT_DIR = ./ebin
 TEST_DIR = ./test
 TEST_OUT_DIR = ./.eunit
-SCRIPT_PATH=$(DEPS)/lfe/bin:.:./bin:"$(PATH)":/usr/local/bin
+SCRIPT_PATH = $(DEPS)/lfe/bin:.:./bin:"$(PATH)":/usr/local/bin
 ifeq ($(shell which lfetool),)
-LFETOOL=$(BIN_DIR)/lfetool
+LFETOOL = $(BIN_DIR)/lfetool
 else
-LFETOOL=lfetool
+LFETOOL = lfetool
 endif
-ERL_LIBS=.:..:$(shell pwd):$(shell $(LFETOOL) info erllibs)
+ERL_LIBS = $(shell pwd):$(shell $(LFETOOL) info erllibs)
 OS := $(shell uname -s)
 ifeq ($(OS),Linux)
 	HOST=$(HOSTNAME)
@@ -42,7 +42,6 @@ get-version:
 
 get-deps:
 	@echo "Getting dependencies ..."
-	@mkdir -p ~/.rcrly/
 	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) $(LFETOOL) download deps
 
 clean-ebin:
@@ -71,22 +70,22 @@ compile-tests: clean-eunit
 repl: compile
 	@which clear >/dev/null 2>&1 && clear || printf "\033c"
 	@echo "Starting an LFE REPL ..."
-	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) $(LFETOOL) repl lfe +pc unicode -s rcrly
+	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) $(LFETOOL) repl lfe +pc unicode
 
 repl-no-deps: compile-no-deps
 	@which clear >/dev/null 2>&1 && clear || printf "\033c"
 	@echo "Starting an LFE REPL ..."
-	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) $(LFETOOL) repl lfe +pc unicode -s rcrly
+	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) $(LFETOOL) repl lfe +pc unicode
 
 shell: compile
 	@which clear >/dev/null 2>&1 && clear || printf "\033c"
 	@echo "Starting an Erlang shell ..."
-	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) erl +pc unicode -s rcrly
+	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) erl +pc unicode
 
 shell-no-deps: compile-no-deps
 	@which clear >/dev/null 2>&1 && clear || printf "\033c"
 	@echo "Starting an Erlang shell ..."
-	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) erl +pc unicode -s rcrly
+	@PATH=$(SCRIPT_PATH) ERL_LIBS=$(ERL_LIBS) erl +pc unicode
 
 clean: clean-ebin clean-eunit
 	@which rebar.cmd >/dev/null 2>&1 && rebar.cmd clean || rebar clean

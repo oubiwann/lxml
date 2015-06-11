@@ -103,10 +103,10 @@
   * all but the last key reference nested data structures that should be
     traversed for their contents (i.e., the third element of the 3-tuples) not
     their attributes (the second element of the 3-tuples)"
-  (let* ((`(,all-but-last ,last) (rcrly-util:rdecons keys))
+  (let* ((`(,all-but-last ,last) (lxml-util:rdecons keys))
          (link-data (get-in all-but-last data))
          (url (find-link last link-data)))
-    (rcrly:get url (++ '(#(endpoint false)) options))))
+    (lhc:get url (++ '(#(endpoint false)) options))))
 
 (defun get-link-in-3tuple (keys data)
   (lists:foldl #'find-link/2 data keys))

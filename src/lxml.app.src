@@ -1,5 +1,5 @@
 %% -*- erlang -*-
-{application, rcrly,
+{application, lxml,
  [
   %% A quick description of the application.
   {description, "Erlang/LFE Recurly REST API Client"},
@@ -10,7 +10,8 @@
   %% All modules used by the application.
   {modules,
    [
-    rcrly
+    lxml,
+    'lxml-util'
    ]},
 
   %% All of the registered names the application uses. This can be ignored.

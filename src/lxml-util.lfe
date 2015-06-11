@@ -2,11 +2,11 @@
   (export all))
 
 (defun get-version ()
-  (lutil:get-app-version 'rcrly))
+  (lutil:get-app-version 'lxml))
 
 (defun get-versions ()
   (++ (lutil:get-versions)
-      `(#(rcrly ,(get-version)))))
+      `(#(lxml ,(get-version)))))
 
 (defun arg->str
   ((arg) (when (is_integer arg))

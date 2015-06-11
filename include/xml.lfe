@@ -3,8 +3,7 @@
      * https://github.com/lfex/exemplar/blob/master/include/macros.lfe
   The macro below differs in that is expects a prefix when defining the element
   and then when calling it -- something designeed to avoid namespace collisions
-  with the relatively general names of the XML elements defined by the Recurly
-  API."
+  with the general tag names common in XML documents. "
   (let* ((prefix-and-tag (atom_to_list (car arg)))
          (`(,prefix ,tag) (string:tokens prefix-and-tag "/")))
     `(progn

@@ -37,9 +37,8 @@ Just add it to your ``rebar.config`` deps:
 ```erlang
   {deps, [
     ...
-    {rcrly, ".*",
-      {git, "git@github.com:oubiwann/lxml.git", "master"}}
-      ]}.
+    {lxml, ".*", {git, "git@github.com:oubiwann/lxml.git", "master"}},
+    ...]}.
 ```
 
 Or, if you use ``lfe.config``:
