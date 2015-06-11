@@ -1,4 +1,4 @@
-# Wrapping erlsome
+# Wrapping erlsom
 
 > Example form for multi-valued results:
 

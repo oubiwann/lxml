@@ -4,12 +4,11 @@
 
 <img src="images/professor-xavier-emile.png" />
 
-lxml is an LFE library which wraps erlsom's XML-parsing capabilities and adds
+lxml is an LFE library which wraps <a href="https://github.com/willemdj/erlsom">erlsom</a>'s XML-parsing capabilities and adds
 an API for easily accessing the parsed data.
 
 <aside class="warning">
-Note that this library has not implemented <em>all</em> of the Recurly API, just
-the most commonly-used functions.
+Note that this library has not wrapped all of erlsom; only the .
 </aside>
 
 <aside class="warning">

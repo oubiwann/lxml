@@ -2,7 +2,7 @@
 {application, lxml,
  [
   %% A quick description of the application.
-  {description, "Erlang/LFE Recurly REST API Client"},
+  {description, "An LFE XML Library"},
 
   %% The version of the application
   {vsn, "0.0.1"},
@@ -25,7 +25,6 @@
                   crypto,
                   public_key,
                   ssl,
-                  xmerl,
                   inets,
                   lhttpc]},
 
