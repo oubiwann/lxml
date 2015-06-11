@@ -41,6 +41,15 @@ html, body {
 // TABLE OF CONTENTS
 ////////////////////////////////////////////////////////////////////////////////
 
+.tocify-wrapper .content {
+  padding: 1em;
+}
+
+.tocify-wrapper .content .title {
+  font-size: 16px;
+  color: $nav-text;
+}
+
 #toc > ul > li > a > span {
   float: right;
   background-color: #2484FF;

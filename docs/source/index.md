@@ -1,19 +1,16 @@
 ---
-title: rcrly LFE API Reference
+title: lxml Library Reference
 
 language_tabs:
   - 
 
 toc_footers:
-  - <a href='http://githug.com/cinova/rcrly/'>View the source</a>
+  - <a href='http://githug.com/oubiwann/lxml/'>View the source</a>
   - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
 includes:
   - intro
-  - starting
-  - results
-  - errors
-  - logging
+  - wrapping
   - api
 
 search: true
