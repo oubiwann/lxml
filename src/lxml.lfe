@@ -1,11 +1,26 @@
 (defmodule lxml
-  (export all))
+  (export (start 0)
+          (parse 1) (parse 2)
+          (get-data 1)
+          (get-in 2)
+          (get-linked 2) (get-linked 3)))
 
 (include-lib "lutil/include/compose.lfe")
 (include-lib "lxml/include/xml.lfe")
 
-(defun parse-body (body)
-  (parse-body body '()))
+(defun start ()
+  (++ (lhc:start) `(#(lxml ok))))
+
+(defun parse (arg)
+  (parse arg '()))
+
+(defun parse
+  ((`#(file ,filename) options)
+   (parse-body (file:read_file filename) options))
+  ((`#(url ,url) options)
+   (parse-body (lhc:get url) options))
+  ((data options)
+   (parse-body data options)))
 
 (defun parse-body (body options)
   (if (=:= (proplists:get_value 'result-type options) 'raw)
@@ -37,7 +52,7 @@
     (tuple (list_to_atom tag)
            (convert-keys attr)
            (convert-keys content)))
-  (((cons head tail))
+  ((`(,head . ,tail))
     (cons (convert-keys head)
           (convert-keys tail)))
   ((x) x))
@@ -61,7 +76,7 @@
   3-tuples."
   ((keys data) (when (is_tuple data))
    (get-in keys (list data)))
-  (((= (cons first-key rest-keys) keys)
+  (((= `(,first-key . ,rest-keys) keys)
     (= (cons first-data rest-data) data))
    (cond ((=:= (size first-data) 3)
           (get-content-in-3tuple keys data))
@@ -69,15 +84,6 @@
           (get-content-in-3tuple
             rest-keys
             (element 2 (lists:keyfind first-key 1 data)))))))
-
-(defun one-or-all
-  "This is for use in filtering results that could either contain a single
-  element or a list of elements, returning just the element itself when
-  the passed list only has one element."
-  (((cons head '()))
-   head)
-  ((all)
-   all))
 
 (defun get-content-in-3tuple (keys data)
   (lists:foldl #'find-content/2 data keys))
@@ -87,7 +93,7 @@
 
   This function assumes that the data desired is in the third (last) element
   of the three-tuple."
-  (one-or-all
+  (lxml-util:one-or-all
     (element 3 (lists:keyfind key 1 data))))
 
 (defun get-linked (keys data)

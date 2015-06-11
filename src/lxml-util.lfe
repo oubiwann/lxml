@@ -53,3 +53,12 @@
   "Returns all but the last element."
   (let ((`(,all-but-last ,_) (rdecons list)))
     all-but-last))
+
+(defun one-or-all
+  "This is for use in filtering results that could either contain a single
+  element or a list of elements, returning just the element itself when
+  the passed list only has one element."
+  ((`(,head . ()))
+   head)
+  ((all)
+   all))

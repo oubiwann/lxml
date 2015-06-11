@@ -8,7 +8,7 @@ lxml is an LFE library which wraps <a href="https://github.com/willemdj/erlsom">
 an API for easily accessing the parsed data.
 
 <aside class="warning">
-Note that this library has not wrapped all of erlsom; only the .
+Note that this library has not wrapped all of erlsom; only <code>erlsom:simple_form</code>.
 </aside>
 
 <aside class="warning">
