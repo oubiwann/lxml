@@ -12,6 +12,7 @@ includes:
   - intro
   - wrapping
   - api
+  - namespaces
 
 search: true
 ---

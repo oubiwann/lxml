@@ -53,6 +53,3 @@ TBD
 
 TBD
 
-## Namespaces
-
-TBD
