@@ -47,7 +47,14 @@ For more information on the ``parse`` function, see the "API" section.
 
 ## Options
 
-TBD
+When calling ``parse`` you can simply pass the data (or URL or filename), or
+you can also pass a second argument: an "options" property list. The supported
+options are:
+
+* ``result-type`` - can be the atom ``raw``. When this is the case, no
+  processing is done on the results; they are simply returned as obtained
+  from erlsom. Without the ``#(result-type raw)`` option set, lxml will return
+  keys as atoms (with it, they are left as-is: strings).
 
 ## Outputs
 

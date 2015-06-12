@@ -15,12 +15,241 @@ will first need to call ``start``.
 
 ## ``parse``
 
+> For this and subsequent API functions, we will use the following
+sample data, assumed to be saved to ``./data.xml``:
+
+```xml
+<life>
+  <bacteria division="domain">
+    <bacterium>spirochetes</bacterium>
+    <bacterium>proteobacteria</bacterium>
+    <bacterium>cyanobacteria</bacterium>
+  </bacteria>
+  <archaea division="domain">
+    <archaum></archaum>
+  </archaea>
+  <eukaryota division="domain">
+    <eukaryotum>slime molds</eukaryotum>
+    <eukaryotum>fungi</eukaryotum>
+    <eukaryotum>plants</eukaryotum>
+    <eukaryotum>animals</eukaryotum>
+  </eukaryota>
+</life>
+```
+
+> Parse the data normally:
+
+```cl
+> (lxml:parse #(file "data.xml"))
+(#(tag "life")
+ #(attr ())
+ #(content
+   #(life ()
+     (#(bacteria
+        (#(division "domain"))
+        (#(bacterium () ("spirochetes"))
+         #(bacterium () ("proteobacteria"))
+         #(bacterium () ("cyanobacteria"))))
+      #(archaea (#(division "domain")) (#(archaum () ())))
+      #(eukaryota
+        (#(division "domain"))
+        (#(eukaryotum () ("slime molds"))
+         #(eukaryotum () ("fungi"))
+         #(eukaryotum () ("plants"))
+         #(eukaryotum () ("animals")))))))
+ #(tail "\n"))
+```
+
+> Parse the data, requesting a raw result:
+
+```cl
+> (lxml:parse #(file "data.xml") '(#(result-type raw)))
+#(ok
+  #("life"
+    ()
+    (#("bacteria"
+       (#("division" "domain"))
+       (#("bacterium" () ("spirochetes"))
+        #("bacterium" () ("proteobacteria"))
+        #("bacterium" () ("cyanobacteria"))))
+     #("archaea" (#("division" "domain")) (#("archaum" () ())))
+     #("eukaryota"
+       (#("division" "domain"))
+       (#("eukaryotum" () ("slime molds"))
+        #("eukaryotum" () ("fungi"))
+        #("eukaryotum" () ("plants"))
+        #("eukaryotum" () ("animals"))))))
+  "\n")
+```
+
+When parsing the data normally, a 4-element property list is returned.
+The keys and values of the proplist are as follows:
+
+* ``tag`` - the top-level tag of the parsed XML data
+* ``attr`` - the attributes of the top-level tag
+* ``content`` - the content of the top-level tag; this includes the full
+  XML result, minus any trailing characters
+* ``tail`` - any trailing characters
+
+Note that XML tags with no attributes simply have an empty list in the
+"attrributes" portion of the parsed results.
+
+Normal parsing also converts nested tag names from strings to ataom.
+
+When asking for raw results, the XML data is passed directly to erlsom and the
+result is returned without any filtering. The data from erlsom is returned as
+a 2-tuple where the elements of the tuple are as follows:
+
+* status - either ``ok``or ``error``
+* result - either the parsed data structure or an error message
+
 ## ``get-data``
+
+> By default, ``get-data`` operates on a parsed result set:
+
+```cl
+> (lxml:get-data (lxml:parse #(file "data.xml")))
+#(life ()
+  (#(bacteria
+     (#(division "domain"))
+     (#(bacterium () ("spirochetes"))
+      #(bacterium () ("proteobacteria"))
+      #(bacterium () ("cyanobacteria"))))
+   #(archaea (#(division "domain")) (#(archaum () ())))
+   #(eukaryota
+     (#(division "domain"))
+     (#(eukaryotum () ("slime molds"))
+      #(eukaryotum () ("fungi"))
+      #(eukaryotum () ("plants"))
+      #(eukaryotum () ("animals"))))))
+```
+
+> However, by passing options, one may call ``get-data`` in the following,
+more concise manner:
+
+```cl
+> (lxml:get-data #(file "data.xml"))
+#(life ()
+  (#(bacteria ...)))
+```
+
+> Or:
+
+```cl
+> (lxml:get-data #(url "http://example.com/data.xml"))
+#(life ()
+  (#(bacteria ...)))
+```
+
+> Or:
+
+```cl
+> (lxml:get-data #(xml "<life> ... </life>"))
+#(life ()
+  (#(bacteria ...)))
+```
+
+The ``get-data`` function is provided as a convenience, as more often than not,
+one cares about the ``#(content ...)`` tuple in the parsed property list, and
+this is what ``get-data`` returns.
+
+``get-data`` also provides a convenience wrapper around parse: if you provide
+a tuple with any of the following keys, the parse command is called under
+the covers, alleviating the user from any need to make that call. The value
+keys are:
+
+* ``file``
+* ``url``
+* ``xml``
 
 ## ``get-in``
 
+> First let's set some data:
+
+```cl
+> (set data (lxml:get-data #(file "data.xml")))
+#(life ()
+```
+
+> Using ``get-in`` trivially, with one key:
+
+```cl
+> (lxml:get-in '(life) data)
+(#(bacteria
+   (#(division "domain"))
+   (#(bacterium () ("spirochetes"))
+    #(bacterium () ("proteobacteria"))
+    #(bacterium () ("cyanobacteria"))))
+ #(archaea (#(division "domain")) (#(archaum () ())))
+ #(eukaryota
+   (#(division "domain"))
+   (#(eukaryotum () ("slime molds"))
+    #(eukaryotum () ("fungi"))
+    #(eukaryotum () ("plants"))
+    #(eukaryotum () ("animals")))))
+```
+
+> Using ``get-in`` with two keys:
+
+```cl
+> (lxml:get-in '(life bacteria) data)
+(#(bacterium () ("spirochetes"))
+ #(bacterium () ("proteobacteria"))
+ #(bacterium () ("cyanobacteria")))
+```
+
+> Using ``get-in`` with three:
+
+```cl
+> (lxml:get-in '(life bacteria bacterium) data)
+"spirochetes"
+```
+
+> Or, to get the third bacterium:
+
+```cl
+> (lxml:get-in '(life bacteria 3))
+"cyanobacteria"
+```
+
+> For each of these, we could also have used ``file``, ``url``, or ``xml``:
+
+```cl
+> (lxml:get-in '(life bacteria) #(file "data.xml"))
+(#(bacterium () ("spirochetes"))
+ #(bacterium () ("proteobacteria"))
+ #(bacterium () ("cyanobacteria")))
+```
+
+``get-in`` is inspired by the Clojure function of the same name and provide
+an easy means of extracting data nested to any depth. A list of keys is
+provided, as well as parsed XML data. It is expected that each subsequent key
+frerences a child element. The parsed XML tree is walked until the last
+key is reached, at which point the data at that node is returned.
+
+Keys may either be atoms (keys in the proplist) or integers (1-based indices).
+This allows for situations when sibling elements have the same name and
+can only be distinguished by index.
+
+As you may have guessed, ``get-in`` provides the same optional use as that
+of ``get-data`` and supports the same tuple keys:
+
+* ``file``
+* ``url``
+* ``xml``
+
+## ``get-attr-in``
+
+TBD
+
 ## ``get-linked``
+
+TBD
 
 ## ``map``
 
+TBD
+
 ## ``foldl``
+
+TBD

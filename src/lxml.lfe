@@ -16,7 +16,10 @@
 
 (defun parse
   ((`#(file ,filename) options)
-   (parse-body (file:read_file filename) options))
+   (case (file:read_file filename)
+     (`#(ok ,data)
+      (parse-body data options))
+     (x x)))
   ((`#(url ,url) options)
    (parse-body (lhc:get url) options))
   ((data options)
@@ -27,19 +30,20 @@
     (parse-body-raw body)
     (parse-body-to-atoms body)))
 
-(defun parse-body-raw
+(defun parse-body-raw (body)
+  (erlsom:simple_form body))
+
+(defun parse-body-shaped
   ((`#(ok #(,tag ,attributes ,content) ,tail))
    `(#(tag ,tag)
      #(attr ,attributes)
      #(content #(,tag ,attributes ,content))
-     #(tail ,tail)))
-  ((body)
-   (parse-body-raw
-     (erlsom:simple_form body))))
+     #(tail ,tail))))
 
-(defun parse-body-to-atoms (body)
-  (->> body
+(defun parse-body-to-atoms (xml)
+  (->> xml
        (parse-body-raw)
+       (parse-body-shaped)
        (convert-keys)))
 
 (defun convert-keys
@@ -57,11 +61,16 @@
           (convert-keys tail)))
   ((x) x))
 
-(defun get-data (results)
-  (logjam:debug (MODULE) 'get-data/1 "Got results: ~p" `(,results))
-  (->> results
-       (proplists:get_value 'body)
-       (proplists:get_value 'content)))
+(defun get-data
+  (((= `#(file ,filename) arg))
+   (get-data (parse arg)))
+  (((= `#(url ,url) arg))
+   (get-data (parse arg)))
+  ((`#(xml ,xml))
+   (get-data (parse-body xml '())))
+  ((results)
+   (logjam:debug (MODULE) 'get-data/1 "Got results: ~p" `(,results))
+   (proplists:get_value 'content results)))
 
 (defun get-in
   "get-in assumes that the last element of the three-tuple is the one that holds
@@ -74,8 +83,16 @@
 
   get-in supports a list of 3-tuples but also a list of 2-tuples which contain
   3-tuples."
+  ((keys (= `#(file ,filename) arg))
+   (get-in keys (get-data arg)))
+  ((keys (= `#(url ,url) arg))
+   (get-in keys (get-data arg)))
+  ((keys (= `#(xml ,xml) arg))
+   (get-in keys (get-data arg)))
   ((keys data) (when (is_tuple data))
    (get-in keys (list data)))
+  ;; XXX generalize the following code to a general-purpose map function
+  ;; for this library
   (((= `(,first-key . ,rest-keys) keys)
     (= (cons first-data rest-data) data))
    (cond ((=:= (size first-data) 3)
@@ -85,16 +102,28 @@
             rest-keys
             (element 2 (lists:keyfind first-key 1 data)))))))
 
+(defun get-parent-in
+  ;; XXX use this for get-attr-in as well as get-linked (in other words,
+  ;; generalize th code in get-linked and move it here
+  'noop)
+
+(defun get-attr-in
+  'noop)
+
 (defun get-content-in-3tuple (keys data)
   (lists:foldl #'find-content/2 data keys))
 
-(defun find-content (key data)
+(defun find-content
   "This is necesary since the proplists module requires 2-tuples only.
 
   This function assumes that the data desired is in the third (last) element
   of the three-tuple."
-  (lxml-util:one-or-all
-    (element 3 (lists:keyfind key 1 data))))
+  ((key data) (when (is_integer key))
+    (lxml-util:one-or-all
+      (element 3 (lists:nth key data))))
+  ((key data)
+    (lxml-util:one-or-all
+      (element 3 (lists:keyfind key 1 data)))))
 
 (defun get-linked (keys data)
   (get-linked keys data '()))
