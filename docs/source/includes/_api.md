@@ -248,7 +248,92 @@ TBD
 
 ## ``map``
 
-TBD
+> Get the raw data of our sample XML file, without any of lxml's
+  post-parse-processing:
+
+```cl
+> (set `#(ok ,data ,_) (lxml:parse #(file "data.xml") '(#(result-type raw))))
+#(ok
+  #("life"
+    ()
+    (#("bacteria"
+       (#("division" "domain"))
+       (#("bacterium" () ("spirochetes"))
+        #("bacterium" () ("proteobacteria"))
+        #("bacterium" () ("cyanobacteria"))))
+     #("archaea" (#("division" "domain")) (#("archaum" () ())))
+     #("eukaryota"
+       (#("division" "domain"))
+       (#("eukaryotum" () ("slime molds"))
+        #("eukaryotum" () ("fungi"))
+        #("eukaryotum" () ("plants"))
+        #("eukaryotum" () ("animals"))))))
+  "\n")
+>
+```
+
+> Using ``lxml:map/2``, we can modify the content of all tags. For example,
+  the following will uppercase all the content data:
+
+```cl
+> (lxml:map #'string:to_upper/1 data)
+#("life"
+  ()
+  (#("bacteria"
+     (#("division" "domain"))
+     (#("bacterium" () ("SPIROCHETES"))
+      #("bacterium" () ("PROTEOBACTERIA"))
+      #("bacterium" () ("CYANOBACTERIA"))))
+   #("archaea" (#("division" "domain")) (#("archaum" () ())))
+   #("eukaryota"
+     (#("division" "domain"))
+     (#("eukaryotum" () ("SLIME MOLDS"))
+      #("eukaryotum" () ("FUNGI"))
+      #("eukaryotum" () ("PLANTS"))
+      #("eukaryotum" () ("ANIMALS"))))))
+```
+
+> In the raw data we got back, all the tags and attirbute keys are all strings.
+  What if we'd like to convert those to atoms? We can use ``lxml:map/4`` and
+  just use the identify function for processing the content, since we don't
+  want that modified:
+
+```cl
+> (lxml:map #'list_to_atom/1 #'lxml:key->atom/1 #'lxml:ident/1 data)
+#(life ()
+  (#(bacteria
+     (#(division "domain"))
+     (#(bacterium () ("spirochetes"))
+      #(bacterium () ("proteobacteria"))
+      #(bacterium () ("cyanobacteria"))))
+   #(archaea (#(division "domain")) (#(archaum () ())))
+   #(eukaryota
+     (#(division "domain"))
+     (#(eukaryotum () ("slime molds"))
+      #(eukaryotum () ("fungi"))
+      #(eukaryotum () ("plants"))
+      #(eukaryotum () ("animals"))))))
+```
+
+``map`` functions typically operate over lists of arbitrary data; the function
+passed to the ``map`` function is what is expected to know something about the
+list data. The ``map`` functions in lxml are significantly different than
+standard ``map`` functions in the following ways:
+
+* They operate on nested data,
+* They understand that the lists will contain either the 3-tuple of parsed XML
+  data, or a list of attribute typles, and
+* There are potentially three functions one may pass: on to operate on the tag,
+  one on the attributes, and another on the contents.
+
+As a result of the last bullet point, ``lxml:map`` comes in three arities:
+
+* ``lxml:map/2`` - takes a content-manipulating function and parsed XML data
+* ``lxml:map/3`` - takes an attribute-manipulating function,
+    a content-manipulating function, and parsed XML data
+* ``lxml:map/4`` - takes s tag-manipulating function,
+    an attribute-manipulating function,
+    a content-manipulating function, and parsed XML data
 
 ## ``foldl``
 

@@ -1,12 +1,10 @@
 (defmodule lxml
-  (export (start 0)
-          (parse 1) (parse 2)
-          (get-data 1)
-          (get-in 2)
-          (get-linked 2) (get-linked 3)))
+  (export all))
 
 (include-lib "lutil/include/compose.lfe")
 (include-lib "lxml/include/xml.lfe")
+
+;;; API functions
 
 (defun start ()
   (++ (lhc:start) `(#(lxml ok))))
@@ -25,42 +23,6 @@
   ((data options)
    (parse-body data options)))
 
-(defun parse-body (body options)
-  (if (=:= (proplists:get_value 'result-type options) 'raw)
-    (parse-body-raw body)
-    (parse-body-to-atoms body)))
-
-(defun parse-body-raw (body)
-  (erlsom:simple_form body))
-
-(defun parse-body-shaped
-  ((`#(ok #(,tag ,attributes ,content) ,tail))
-   `(#(tag ,tag)
-     #(attr ,attributes)
-     #(content #(,tag ,attributes ,content))
-     #(tail ,tail))))
-
-(defun parse-body-to-atoms (xml)
-  (->> xml
-       (parse-body-raw)
-       (parse-body-shaped)
-       (convert-keys)))
-
-(defun convert-keys
-  "Convert property list keys to atoms."
-  ((`#(,key ,val)) (when (is_list key))
-    (convert-keys (tuple (list_to_atom key) val)))
-  ((`#(,key ,val))
-    (tuple key (convert-keys val)))
-  ((`#(,tag ,attr ,content))
-    (tuple (list_to_atom tag)
-           (convert-keys attr)
-           (convert-keys content)))
-  ((`(,head . ,tail))
-    (cons (convert-keys head)
-          (convert-keys tail)))
-  ((x) x))
-
 (defun get-data
   (((= `#(file ,filename) arg))
    (get-data (parse arg)))
@@ -69,7 +31,6 @@
   ((`#(xml ,xml))
    (get-data (parse-body xml '())))
   ((results)
-   (logjam:debug (MODULE) 'get-data/1 "Got results: ~p" `(,results))
    (proplists:get_value 'content results)))
 
 (defun get-in
@@ -153,3 +114,56 @@
   second element of the three-tuple."
   (let ((`(#(href ,link)) (element 2 (lists:keyfind key 1 data))))
     link))
+
+(defun map (content-func data)
+  (lxml:map #'ident/1 content-func data))
+
+(defun map (attr-func content-func data)
+  (lxml:map #'ident/1 attr-func content-func data))
+
+(defun map
+  ((tag-func attr-func content-func `#(,tag ,attrs ,content))
+    (tuple (funcall tag-func tag)
+           (lists:map attr-func attrs)
+           (lxml:map tag-func attr-func content-func content)))
+  ((tag-func attr-func content-func `(,head . ,tail))
+    (cons (lxml:map tag-func attr-func content-func head)
+          (lxml:map tag-func attr-func content-func tail)))
+  ((_ _ content-func x)
+   (funcall content-func x)))
+
+(defun ident (x)
+  "The identity function."
+  x)
+
+;;; Supporting private functions
+
+(defun parse-body (body options)
+  (if (=:= (proplists:get_value 'result-type options) 'raw)
+    (parse-body-raw body)
+    (parse-body-to-atoms body)))
+
+(defun parse-body-raw (body)
+  (erlsom:simple_form body))
+
+(defun parse-body-shaped
+  ((`#(ok #(,tag ,attributes ,content) ,tail))
+   `(#(tag ,tag)
+     #(attr ,attributes)
+     #(content #(,tag ,attributes ,content))
+     #(tail ,tail))))
+
+(defun parse-body-to-atoms (xml)
+  (->> xml
+       (parse-body-raw)
+       (parse-body-shaped)
+       (convert-keys)))
+
+(defun convert-keys (data)
+  "Convert property list keys to atoms."
+  (lxml:map #'list_to_atom/1 #'key->atom/1 #'lxml:ident/1 data))
+
+(defun key->atom
+  ((`#(,key ,val)) (when (is_list key))
+   `#(,(list_to_atom key) ,val))
+  ((x) x))
