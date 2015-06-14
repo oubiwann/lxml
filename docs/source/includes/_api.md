@@ -334,7 +334,3 @@ As a result of the last bullet point, ``lxml:map`` comes in three arities:
 * ``lxml:map/4`` - takes s tag-manipulating function,
     an attribute-manipulating function,
     a content-manipulating function, and parsed XML data
-
-## ``foldl``
-
-TBD

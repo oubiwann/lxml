@@ -23,9 +23,10 @@ is a wrapper for the Erlang community's
 [erlsom](https://github.com/willemdj/erlsom) library, providing the following
 additional features:
 
-1. Lispy naming conventions via [LFE]() and [kla](), and
+1. Lispy naming conventions via [LFE](https://github.com/rvirding/lfe) and
+   [kla](https://github.com/billosys/kla), and
 2. Utility functions for easily accessing parsed XML data
-   (e.g., ``map``, ``fold``, ``get-in``, and ``get-linked``).
+   (e.g., ``map``, ``get-in``, ``get-linked``, &c.).
 
 Both of these are discussed more in the lxml docs (see below for the link).
 

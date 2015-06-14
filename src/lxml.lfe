@@ -55,11 +55,11 @@
   ;; XXX generalize the following code to a general-purpose map function
   ;; for this library
   (((= `(,first-key . ,rest-keys) keys)
-    (= (cons first-data rest-data) data))
+    (= `(,first-data . ,rest-data) data))
    (cond ((=:= (size first-data) 3)
-          (get-content-in-3tuple keys data))
+          (get-content keys data))
          ((=:= (size first-data) 2)
-          (get-content-in-3tuple
+          (get-content
             rest-keys
             (element 2 (lists:keyfind first-key 1 data)))))))
 
@@ -71,7 +71,7 @@
 (defun get-attr-in
   'noop)
 
-(defun get-content-in-3tuple (keys data)
+(defun get-content (keys data)
   (lists:foldl #'find-content/2 data keys))
 
 (defun find-content
