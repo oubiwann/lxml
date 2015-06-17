@@ -8,7 +8,7 @@ Note that for genereating XML in LFE (using S-expressions), we recommend
 [exemplar](https://github.com/lfex/exemplar). The intended use for lxml is
 the *parsing* of XML documents.
 
-### Table of Contents
+**Table of Contents**
 
 * [Introduction](#introduction-)
   * [About lxml](#about-lxml-)
